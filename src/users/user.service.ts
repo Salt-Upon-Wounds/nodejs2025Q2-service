@@ -8,10 +8,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './user.entity';
 import { v4 as uuidv4, validate as isUuid } from 'uuid';
+import { DB } from 'src/db';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  private users: User[] = DB.users;
 
   findAll(): User[] {
     return this.users;
