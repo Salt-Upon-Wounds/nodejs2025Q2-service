@@ -1,33 +1,29 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  HttpCode,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, HttpCode } from '@nestjs/common';
 import { FavService } from './fav.service';
 
 @Controller('favs')
 export class FavController {
-  constructor(private readonly favService: FavService) {}
+  constructor(private readonly service: FavService) {}
 
   @Get()
-  getAll() {}
+  getAll() {
+    return this.service.findAll();
+  }
 
-  @Get(':id')
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {}
+  @Post(':type/:id')
+  add(
+    @Param('type') type: 'artist' | 'album' | 'track',
+    @Param('id') id: string,
+  ) {
+    return this.service.add(type, id);
+  }
 
-  @Post()
-  create() {}
-
-  @Put(':id')
-  update(@Param('id', new ParseUUIDPipe()) id: string) {}
-
-  @Delete(':id')
+  @Delete(':type/:id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {}
+  remove(
+    @Param('type') type: 'artist' | 'album' | 'track',
+    @Param('id') id: string,
+  ) {
+    return this.service.remove(type, id);
+  }
 }

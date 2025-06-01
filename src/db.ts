@@ -6,13 +6,17 @@ import { User } from './users/user.entity';
 
 export const DB: {
   users: User[];
-  favourites: Favourites[];
+  favourites: Favourites;
   tracks: Track[];
   artists: Artist[];
   albums: Album[];
 } = {
   users: [],
-  favourites: [],
+  favourites: {
+    albums: [],
+    artists: [],
+    tracks: [],
+  },
   tracks: [],
   artists: [],
   albums: [],

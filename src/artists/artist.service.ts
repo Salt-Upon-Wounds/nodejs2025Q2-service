@@ -10,7 +10,7 @@ import { DB } from 'src/db';
 
 @Injectable()
 export class ArtistService {
-  private artists: Artist[] = DB.artists;
+  private artists = DB.artists;
 
   findAll() {
     console.log('Fetching all artists');
@@ -61,6 +61,11 @@ export class ArtistService {
       if (album.artistId === id) {
         album.artistId = null;
       }
+    }
+
+    const favIndex = DB.favourites.artists.indexOf(id);
+    if (favIndex !== -1) {
+      DB.favourites.artists.splice(favIndex, 1);
     }
   }
 }

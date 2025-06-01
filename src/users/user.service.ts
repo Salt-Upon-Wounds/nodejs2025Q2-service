@@ -12,9 +12,9 @@ import { DB } from 'src/db';
 
 @Injectable()
 export class UserService {
-  private users: User[] = DB.users;
+  private users = DB.users;
 
-  findAll(): User[] {
+  findAll() {
     return this.users;
   }
 

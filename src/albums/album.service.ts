@@ -10,7 +10,7 @@ import { DB } from 'src/db';
 
 @Injectable()
 export class AlbumService {
-  private albums: Album[] = DB.albums;
+  private albums = DB.albums;
 
   findAll() {
     return this.albums;
@@ -53,6 +53,11 @@ export class AlbumService {
       if (track.albumId === id) {
         track.albumId = null;
       }
+    }
+
+    const favIndex = DB.favourites.albums.indexOf(id);
+    if (favIndex !== -1) {
+      DB.favourites.albums.splice(favIndex, 1);
     }
   }
 }

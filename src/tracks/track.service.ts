@@ -10,7 +10,7 @@ import { DB } from 'src/db';
 
 @Injectable()
 export class TrackService {
-  private tracks: Track[] = DB.tracks;
+  private tracks = DB.tracks;
 
   findAll() {
     return this.tracks;
@@ -44,5 +44,10 @@ export class TrackService {
     if (index === -1) throw new NotFoundException('Track not found');
 
     this.tracks.splice(index, 1);
+
+    const favIndex = DB.favourites.tracks.indexOf(id);
+    if (favIndex !== -1) {
+      DB.favourites.tracks.splice(favIndex, 1);
+    }
   }
 }
