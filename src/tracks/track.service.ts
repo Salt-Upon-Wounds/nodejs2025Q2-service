@@ -37,7 +37,7 @@ export class TrackService {
     return this.tracks[index];
   }
 
-  remove(id: string): void {
+  remove(id: string) {
     if (!isUuid(id)) throw new BadRequestException('Invalid UUID');
 
     const index = this.tracks.findIndex((t) => t.id === id);

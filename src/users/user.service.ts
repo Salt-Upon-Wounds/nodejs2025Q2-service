@@ -18,7 +18,7 @@ export class UserService {
     return this.users;
   }
 
-  findOne(id: string): User {
+  findOne(id: string) {
     if (!isUuid(id)) throw new BadRequestException('Invalid UUID');
 
     const user = this.users.find((u) => u.id === id);
@@ -26,7 +26,7 @@ export class UserService {
     return user;
   }
 
-  create(dto: CreateUserDto): User {
+  create(dto: CreateUserDto) {
     if (!dto.login || !dto.password) {
       throw new BadRequestException('Missing required fields');
     }
@@ -44,7 +44,7 @@ export class UserService {
     return newUser;
   }
 
-  updatePassword(id: string, dto: UpdatePasswordDto): User {
+  updatePassword(id: string, dto: UpdatePasswordDto) {
     if (!isUuid(id)) throw new BadRequestException('Invalid UUID');
 
     const user = this.users.find((u) => u.id === id);
@@ -60,7 +60,7 @@ export class UserService {
     return user;
   }
 
-  remove(id: string): void {
+  remove(id: string) {
     if (!isUuid(id)) throw new BadRequestException('Invalid UUID');
 
     const index = this.users.findIndex((u) => u.id === id);
