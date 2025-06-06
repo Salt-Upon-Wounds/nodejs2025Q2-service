@@ -13,6 +13,6 @@ async function bootstrap() {
     SwaggerUI.setup(YAML.load(join(__dirname, '..', 'doc', 'api.yaml'))),
   );
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  await app.listen(process.env.PORT || 4000);
+  await app.listen(process.env.PORT || 4000, '0.0.0.0');
 }
 bootstrap();
