@@ -6,3 +6,48 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model User {
+  id        String      @id @default(uuid())
+  login     String
+  password  String
+  version   Int
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Favorites Favorites[]
+}
+
+model Artist {
+  id     String  @id @default(uuid())
+  name   String
+  grammy Boolean
+  Album  Album[]
+  Track  Track[]
+}
+
+model Album {
+  id       String  @id @default(uuid())
+  name     String
+  year     Int
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+  Track    Track[]
+}
+
+model Track {
+  id       String  @id @default(uuid())
+  name     String
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+  album    Album?  @relation(fields: [albumId], references: [id])
+  albumId  String?
+  duration Int
+}
+
+model Favorites {
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String   @id
+  artists String[]
+  albums  String[]
+  tracks  String[]
+}

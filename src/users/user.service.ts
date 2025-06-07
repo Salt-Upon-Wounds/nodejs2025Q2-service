@@ -6,66 +6,65 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { User } from './user.entity';
 import { v4 as uuidv4, validate as isUuid } from 'uuid';
-import { DB } from 'src/db';
+import { PrismaService } from '../services/prisma.service';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  private users = DB.users;
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.users;
+  async findAll(): Promise<User[]> {
+    return this.prisma.user.findMany();
   }
 
-  findOne(id: string) {
+  async findOne(id: string): Promise<User> {
     if (!isUuid(id)) throw new BadRequestException('Invalid UUID');
 
-    const user = this.users.find((u) => u.id === id);
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
-  create(dto: CreateUserDto) {
+  async create(dto: CreateUserDto): Promise<User> {
     if (!dto.login || !dto.password) {
       throw new BadRequestException('Missing required fields');
     }
 
-    const now = Date.now();
-    const newUser: User = {
-      id: uuidv4(),
-      login: dto.login,
-      password: dto.password,
-      version: 1,
-      createdAt: now,
-      updatedAt: now,
-    };
-    this.users.push(newUser);
-    return newUser;
+    const now = new Date();
+    return this.prisma.user.create({
+      data: {
+        id: uuidv4(),
+        login: dto.login,
+        password: dto.password,
+        version: 1,
+        createdAt: now,
+        updatedAt: now,
+      },
+    });
   }
 
-  updatePassword(id: string, dto: UpdatePasswordDto) {
+  async updatePassword(id: string, dto: UpdatePasswordDto): Promise<User> {
     if (!isUuid(id)) throw new BadRequestException('Invalid UUID');
-
-    const user = this.users.find((u) => u.id === id);
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
-
     if (user.password !== dto.oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
     }
-
-    user.password = dto.newPassword;
-    user.version++;
-    user.updatedAt = Date.now();
-    return user;
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        password: dto.newPassword,
+        version: user.version + 1,
+        updatedAt: new Date(),
+      },
+    });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     if (!isUuid(id)) throw new BadRequestException('Invalid UUID');
-
-    const index = this.users.findIndex((u) => u.id === id);
-    if (index === -1) throw new NotFoundException('User not found');
-
-    this.users.splice(index, 1);
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    await this.prisma.user.delete({ where: { id } });
   }
 }

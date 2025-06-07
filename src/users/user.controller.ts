@@ -18,37 +18,38 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAll() {
-    return this.userService.findAll();
+  async getAll() {
+    const users = await this.userService.findAll();
+    return users.map(({ password, ...rest }) => rest);
   }
 
   @Get(':id')
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = { ...this.userService.findOne(id) };
-    delete user.password;
-    return user;
+  async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.userService.findOne(id);
+    const { password, ...rest } = user;
+    return rest;
   }
 
   @Post()
-  create(@Body() dto: CreateUserDto) {
-    const user = { ...this.userService.create(dto) };
-    delete user.password;
-    return user;
+  async create(@Body() dto: CreateUserDto) {
+    const user = await this.userService.create(dto);
+    const { password, ...rest } = user;
+    return rest;
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdatePasswordDto,
   ) {
-    const user = { ...this.userService.updatePassword(id, dto) };
-    delete user.password;
-    return user;
+    const user = await this.userService.updatePassword(id, dto);
+    const { password, ...rest } = user;
+    return rest;
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.userService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.userService.remove(id);
   }
 }

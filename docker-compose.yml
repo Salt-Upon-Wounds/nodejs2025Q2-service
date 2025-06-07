@@ -24,13 +24,31 @@ services:
     ports:
       - "${PORT:-4000}:${PORT:-4000}"
     environment:
-      DATABASE_URL: postgres://nestuser:nestpass@postgres:5432/nestdb
+      DATABASE_URL: "${DATABASE_URL}"
+      CHOKIDAR_USEPOLLING: "true"
     depends_on:
       - postgres
     restart: always
     networks:
       - nestnet
-    command: sh -c "npx prisma generate && npm run start:dev"
+    command: sh -c "npx prisma db push && npm run start:dev"
+  studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+    ports:
+      - "5555:5555"
+    depends_on:
+      - postgres
+    networks:
+      - nestnet
+    command: sh -c "npx prisma studio"
 
 volumes:
   pgdata:
