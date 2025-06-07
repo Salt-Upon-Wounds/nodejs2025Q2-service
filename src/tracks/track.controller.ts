@@ -18,17 +18,17 @@ export class TrackController {
   constructor(private readonly service: TrackService) {}
 
   @Get()
-  getAll() {
+  async getAll() {
     return this.service.findAll();
   }
 
   @Get(':id')
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  create(@Body() dto: CreateTrackDto) {
+  async create(@Body() dto: CreateTrackDto) {
     console.log('Creating track with DTO:', dto);
     if (!dto.name || dto.duration === undefined) {
       throw new BadRequestException('Missing required fields');
@@ -37,7 +37,7 @@ export class TrackController {
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: CreateTrackDto,
   ) {
@@ -46,7 +46,7 @@ export class TrackController {
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.service.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.service.remove(id);
   }
 }

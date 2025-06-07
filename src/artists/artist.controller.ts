@@ -17,28 +17,31 @@ export class ArtistController {
   constructor(private readonly service: ArtistService) {}
 
   @Get()
-  getAll() {
+  async getAll() {
     return this.service.findAll();
   }
 
   @Get(':id')
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  create(@Body() dto: ArtistDto) {
+  async create(@Body() dto: ArtistDto) {
     return this.service.create(dto);
   }
 
   @Put(':id')
-  update(@Param('id', new ParseUUIDPipe()) id: string, @Body() dto: ArtistDto) {
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: ArtistDto,
+  ) {
     return this.service.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.service.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.service.remove(id);
   }
 }

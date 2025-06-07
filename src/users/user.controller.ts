@@ -12,29 +12,37 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  private userFormatter(user: User) {
+    const { password, ...rest } = user;
+    return {
+      ...rest,
+      createdAt: rest.createdAt.getTime(),
+      updatedAt: rest.updatedAt.getTime(),
+    };
+  }
+
   @Get()
   async getAll() {
     const users = await this.userService.findAll();
-    return users.map(({ password, ...rest }) => rest);
+    return users.map(this.userFormatter);
   }
 
   @Get(':id')
   async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const user = await this.userService.findOne(id);
-    const { password, ...rest } = user;
-    return rest;
+    return this.userFormatter(user);
   }
 
   @Post()
   async create(@Body() dto: CreateUserDto) {
     const user = await this.userService.create(dto);
-    const { password, ...rest } = user;
-    return rest;
+    return this.userFormatter(user);
   }
 
   @Put(':id')
@@ -43,8 +51,7 @@ export class UserController {
     @Body() dto: UpdatePasswordDto,
   ) {
     const user = await this.userService.updatePassword(id, dto);
-    const { password, ...rest } = user;
-    return rest;
+    return this.userFormatter(user);
   }
 
   @Delete(':id')
