@@ -11,16 +11,10 @@
 git clone {repository URL}
 ```
 
-## Installing NPM modules
-
-```
-npm install
-```
-
 ## Running application
 
 ```
-npm start
+docker-compose up --build
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -65,8 +59,8 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+### Проверка уязвимостей
 
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+```sh
+npm run audit
+```

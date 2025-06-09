@@ -6,12 +6,12 @@ export class FavController {
   constructor(private readonly service: FavService) {}
 
   @Get()
-  getAll() {
+  async getAll() {
     return this.service.findAll();
   }
 
   @Post(':type/:id')
-  add(
+  async add(
     @Param('type') type: 'artist' | 'album' | 'track',
     @Param('id') id: string,
   ) {
@@ -20,10 +20,10 @@ export class FavController {
 
   @Delete(':type/:id')
   @HttpCode(204)
-  remove(
+  async remove(
     @Param('type') type: 'artist' | 'album' | 'track',
     @Param('id') id: string,
   ) {
-    return this.service.remove(type, id);
+    await this.service.remove(type, id);
   }
 }

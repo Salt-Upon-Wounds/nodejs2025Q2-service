@@ -12,43 +12,51 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  private userFormatter(user: User) {
+    const { password, ...rest } = user;
+    return {
+      ...rest,
+      createdAt: rest.createdAt.getTime(),
+      updatedAt: rest.updatedAt.getTime(),
+    };
+  }
+
   @Get()
-  getAll() {
-    return this.userService.findAll();
+  async getAll() {
+    const users = await this.userService.findAll();
+    return users.map(this.userFormatter);
   }
 
   @Get(':id')
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = { ...this.userService.findOne(id) };
-    delete user.password;
-    return user;
+  async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.userService.findOne(id);
+    return this.userFormatter(user);
   }
 
   @Post()
-  create(@Body() dto: CreateUserDto) {
-    const user = { ...this.userService.create(dto) };
-    delete user.password;
-    return user;
+  async create(@Body() dto: CreateUserDto) {
+    const user = await this.userService.create(dto);
+    return this.userFormatter(user);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdatePasswordDto,
   ) {
-    const user = { ...this.userService.updatePassword(id, dto) };
-    delete user.password;
-    return user;
+    const user = await this.userService.updatePassword(id, dto);
+    return this.userFormatter(user);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.userService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.userService.remove(id);
   }
 }

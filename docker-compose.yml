@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    container_name: nest_postgres
+    environment:
+      POSTGRES_DB: nestdb
+      POSTGRES_USER: nestuser
+      POSTGRES_PASSWORD: nestpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pglog:/var/log/postgresql
+    networks:
+      - nestnet
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest_app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "${PORT:-4000}:${PORT:-4000}"
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - nestnet
+    command: sh -c "npx prisma db push && npm run start:dev"
+  studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+    ports:
+      - "5555:5555"
+    depends_on:
+      - postgres
+    networks:
+      - nestnet
+    command: sh -c "npx prisma studio"
+
+volumes:
+  pgdata:
+  pglog:
+
+networks:
+  nestnet:
+    driver: bridge
