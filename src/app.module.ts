@@ -8,6 +8,7 @@ import { FavModule } from './favourites/fav.module';
 import { ArtistModule } from './artists/artist.module';
 import { AlbumModule } from './albums/album.module';
 import { PrismaService } from './services/prisma.service';
+import { LoggingService } from './services/logging.service';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { PrismaService } from './services/prisma.service';
     AlbumModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, LoggingService],
 })
 export class AppModule {}
