@@ -26,7 +26,7 @@ export class AuthService {
       Number(process.env.CRYPT_SALT) || 10,
     );
     const now = new Date();
-    await this.prisma.user.create({
+    const created = await this.prisma.user.create({
       data: {
         id: uuidv4(),
         login,
@@ -36,7 +36,7 @@ export class AuthService {
         updatedAt: now,
       },
     });
-    return { message: 'User created' };
+    return { message: 'User created', id: created.id };
   }
 
   async login(login: string, password: string) {

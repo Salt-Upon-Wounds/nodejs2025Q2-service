@@ -10,6 +10,8 @@ import { AlbumModule } from './albums/album.module';
 import { PrismaService } from './services/prisma.service';
 import { LoggingService } from './services/logging.service';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt.guard';
 
 @Module({
   imports: [
@@ -22,6 +24,14 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, LoggingService],
+  providers: [
+    AppService,
+    PrismaService,
+    LoggingService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

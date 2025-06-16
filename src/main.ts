@@ -7,7 +7,6 @@ import { join } from 'path';
 import { LoggingService } from './services/logging.service';
 import { LoggingMiddleware } from './services/logging.middleware';
 import { AllExceptionsFilter } from './services/all-exceptions.filter';
-import { JwtAuthGuard } from './auth/jwt.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,7 +19,6 @@ async function bootstrap() {
   });
   app.useLogger(logger);
   app.useGlobalFilters(new AllExceptionsFilter(app.get(LoggingService)));
-  app.useGlobalGuards(new JwtAuthGuard());
   app.use(
     '/doc',
     SwaggerUI.serve,
