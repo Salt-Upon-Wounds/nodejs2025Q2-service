@@ -29,7 +29,18 @@ export class LoggingService implements LoggerService {
     return this.levels[level] <= this.levels[this.logLevel];
   }
 
+  private ensureLogFileExists() {
+    const dir = path.dirname(this.logFile);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    if (!fs.existsSync(this.logFile)) {
+      fs.writeFileSync(this.logFile, '');
+    }
+  }
+
   private write(message: string) {
+    this.ensureLogFileExists();
     this.rotateLogFileIfNeeded();
     fs.appendFileSync(this.logFile, message + '\n');
   }
