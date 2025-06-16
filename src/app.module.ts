@@ -9,6 +9,7 @@ import { ArtistModule } from './artists/artist.module';
 import { AlbumModule } from './albums/album.module';
 import { PrismaService } from './services/prisma.service';
 import { LoggingService } from './services/logging.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LoggingService } from './services/logging.service';
     FavModule,
     ArtistModule,
     AlbumModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, LoggingService],

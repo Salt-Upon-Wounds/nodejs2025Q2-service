@@ -21,7 +21,10 @@ export class AuthService {
       throw new BadRequestException('No login or password');
     const exists = await this.prisma.user.findUnique({ where: { login } });
     if (exists) throw new BadRequestException('User already exists');
-    const hash = await bcrypt.hash(password, process.env.CRYPT_SALT || 10);
+    const hash = await bcrypt.hash(
+      password,
+      Number(process.env.CRYPT_SALT) || 10,
+    );
     const now = new Date();
     await this.prisma.user.create({
       data: {
