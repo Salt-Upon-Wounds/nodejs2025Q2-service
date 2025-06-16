@@ -8,6 +8,10 @@ import { FavModule } from './favourites/fav.module';
 import { ArtistModule } from './artists/artist.module';
 import { AlbumModule } from './albums/album.module';
 import { PrismaService } from './services/prisma.service';
+import { LoggingService } from './services/logging.service';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt.guard';
 
 @Module({
   imports: [
@@ -17,8 +21,17 @@ import { PrismaService } from './services/prisma.service';
     FavModule,
     ArtistModule,
     AlbumModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [
+    AppService,
+    PrismaService,
+    LoggingService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
